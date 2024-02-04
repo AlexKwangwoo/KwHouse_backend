@@ -74,6 +74,7 @@ const sendEmail = async options => {
     process.env.EMAIL_USERNAME,
     process.env.EMAIL_PASSWORD
   );
+  // https://mailtrap.io/inboxes/2541044/messages/4013428405 애서 구글로그인으로 확인가능!
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
