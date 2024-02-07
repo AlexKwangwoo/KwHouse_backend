@@ -13,7 +13,8 @@ const compression = require('compression');
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
 const userRouter = require('./routes/userRoutes');
-
+const amenityRouter = require('./routes/amenityRoutes');
+const addOnServiceRouter = require('./routes/addOnServiceRoutes');
 // middle response 라던지 많은것들을 압축해서 보내준다.. 자세한건 다시 알아봐야할듯
 
 const app = express();
@@ -176,6 +177,8 @@ app.use((req, res, next) => {
 app.use(compression());
 
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/amenities', amenityRouter);
+app.use('/api/v1/addOnServices', addOnServiceRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
