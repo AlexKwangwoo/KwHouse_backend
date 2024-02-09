@@ -7,6 +7,8 @@ router
   .get(roomController.getAllRooms)
   .post(roomController.createRoom);
 
+router.route('/category').get(roomController.getRoomByCate);
+
 router
   .route('/:id')
   .get(roomController.getRoom)
