@@ -15,4 +15,12 @@ router
   .patch(roomController.updateRoom)
   .delete(roomController.deleteRoom);
 
+router
+  .route('/:id/pictures')
+  .patch(
+    roomController.uploadTourImages,
+    roomController.insertTourImagesLinks,
+    roomController.updatePictureToRoom
+  );
+
 module.exports = router;

@@ -17,6 +17,7 @@ const amenityRouter = require('./routes/amenityRoutes');
 const addOnServiceRouter = require('./routes/addOnServiceRoutes');
 const categoryRouter = require('./routes/categoryRoutes');
 const roomRouter = require('./routes/roomRoutes');
+const reviewRoomRouter = require('./routes/reviewRoomRoutes');
 // middle response 라던지 많은것들을 압축해서 보내준다.. 자세한건 다시 알아봐야할듯
 
 const app = express();
@@ -183,6 +184,7 @@ app.use('/api/v1/amenities', amenityRouter);
 app.use('/api/v1/addOnServices', addOnServiceRouter);
 app.use('/api/v1/categories', categoryRouter);
 app.use('/api/v1/rooms', roomRouter);
+app.use('/api/v1/reviews/room', reviewRoomRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

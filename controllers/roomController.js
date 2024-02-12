@@ -1,15 +1,101 @@
 const joinQuery = require('mongo-join-query');
+const multer = require('multer');
+const multerS3 = require('multer-s3');
+const AWS = require('aws-sdk');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
 const AppError = require('../utils/appError');
 const Category = require('../models/categoryModel');
 const Room = require('../models/roomModel');
+const uploadToS3 = require('../utils/s3');
 
 exports.getAllRooms = factory.getAll(Room);
-exports.getRoom = factory.getOne(Room);
+//reviews 는 roomModel안에서 roomSchema.virtual('reviews' <-의것임
+exports.getRoom = factory.getOne(Room, {
+  path: 'reviews',
+  // -room만 쓰면 안됨..
+  select: 'review overall_rating user createdAt -room',
+  populate: [
+    // {
+    //   path: 'room',
+    //   model: 'Room',
+    //   select: ''
+    // },
+    {
+      path: 'user',
+      model: 'User',
+      select: 'name'
+    }
+  ],
+  options: {
+    limit: 2,
+    sort: { createdAt: -1 } //-1도됨
+    // skip: 0
+  }
+});
 exports.createRoom = factory.createOne(Room);
 exports.updateRoom = factory.updateOne(Room);
 exports.deleteRoom = factory.deleteOne(Room);
+
+AWS.config.update({
+  apiVersion: '2010-12-01',
+  accessKeyId: process.env.AWS_KEY,
+  secretAccessKey: process.env.AWS_SECRET,
+  region: 'us-east-1'
+});
+const s3 = new AWS.S3();
+const multerStorage = multerS3({
+  s3: s3,
+  bucket: 'kwhouse',
+  key: (req, file, cb) => {
+    const name = file.originalname.split('.')[0];
+    const ext = file.mimetype.split('/')[1];
+    cb(null, `rooms/${name}-${Date.now()}.${ext}`);
+  }
+});
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new AppError('Not an image! Please upload only images.', 400), false);
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter
+});
+
+exports.uploadTourImages = upload.array('images', 10);
+exports.insertTourImagesLinks = (req, res, next) => {
+  if (!req.files) return next();
+  const images = [];
+  req.files.forEach(file => {
+    images.push(file.location);
+  });
+  req.body.images = images;
+  next();
+};
+
+exports.updatePictureToRoom = catchAsync(async (req, res, next) => {
+  const doc = await Room.findByIdAndUpdate(
+    req.params.id,
+    { pictures: req.body.images },
+    {
+      new: true,
+      runValidators: true
+    }
+  );
+
+  res.status(200).json({
+    status: 'success',
+    results: doc,
+    data: {
+      data: doc
+    }
+  });
+});
 
 // aggregation 참고 한번 api실행해보면 느낌옴.. 난이도에 따라 정렬될것임
 // https://www.mongodb.com/docs/manual/reference/operator/aggregation/#date-expression-operators
