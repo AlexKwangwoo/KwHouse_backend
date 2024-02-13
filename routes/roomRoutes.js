@@ -18,8 +18,8 @@ router
 router
   .route('/:id/pictures')
   .patch(
-    roomController.uploadTourImages,
-    roomController.insertTourImagesLinks,
+    roomController.uploadRoomImages,
+    roomController.insertRoomImagesLinks,
     roomController.updatePictureToRoom
   );
 

@@ -1,5 +1,7 @@
 const multer = require('multer');
-const sharp = require('sharp');
+// const sharp = require('sharp');
+const multerS3 = require('multer-s3');
+const AWS = require('aws-sdk');
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
@@ -21,9 +23,26 @@ const factory = require('./handlerFactory');
 // });
 
 // 이거는 메모리에 저장될것임!
-const multerStorage = multer.memoryStorage();
+
+AWS.config.update({
+  apiVersion: '2010-12-01',
+  accessKeyId: process.env.AWS_KEY,
+  secretAccessKey: process.env.AWS_SECRET,
+  region: 'us-east-1'
+});
+const s3 = new AWS.S3();
+const multerStorage = multerS3({
+  s3: s3,
+  bucket: 'kwhouse',
+  key: (req, file, cb) => {
+    const name = file.originalname.split('.')[0];
+    const ext = file.mimetype.split('/')[1];
+    cb(null, `users/${name}-${Date.now()}.${ext}`);
+  }
+});
 
 const multerFilter = (req, file, cb) => {
+  // 파일 확장자 체크 ex) image/png
   if (file.mimetype.startsWith('image')) {
     cb(null, true);
   } else {
@@ -36,21 +55,35 @@ const upload = multer({
   fileFilter: multerFilter
 });
 
-// form에서 의 필드들중 이름이 photo
-exports.uploadUserPhoto = upload.single('photo');
-
-exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
-  if (!req.file) return next();
-
-  req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
-
-  await sharp(req.file.buffer)
-    .resize(500, 500)
-    .toFormat('jpeg')
-    .jpeg({ quality: 90 })
-    .toFile(`public/img/users/${req.file.filename}`);
-
+exports.uploadUserImages = upload.array('images', 1);
+exports.insertUserImagesLinks = (req, res, next) => {
+  if (!req.files) return next();
+  const images = [];
+  req.files.forEach(file => {
+    images.push(file.location);
+  });
+  req.body.images = images;
   next();
+};
+
+exports.updatePictureToUser = catchAsync(async (req, res, next) => {
+  console.log('req.body.images', req.body.images);
+  const doc = await User.findByIdAndUpdate(
+    req.user.id,
+    { profile_img: req.body.images[0] },
+    {
+      new: true,
+      runValidators: true
+    }
+  );
+
+  res.status(200).json({
+    status: 'success',
+    results: doc,
+    data: {
+      data: doc
+    }
+  });
 });
 
 const filterObj = (obj, ...allowedFields) => {

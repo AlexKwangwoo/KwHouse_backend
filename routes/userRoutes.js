@@ -15,15 +15,15 @@ router.patch('/resetPassword/:token', authController.resetPassword);
 router.use(authController.protect);
 router.patch('/updateMyPassword', authController.updatePassword);
 router.get('/me', userController.getMe, userController.getUser);
+router.patch(
+  '/me/picture',
+  userController.uploadUserImages,
+  userController.insertUserImagesLinks,
+  userController.updatePictureToUser
+);
 
 // multer는 multi form 방식을 지원한다!
-router.patch(
-  '/updateMe',
-  // upload.single('photo'),
-  userController.uploadUserPhoto,
-  userController.resizeUserPhoto,
-  userController.updateMe
-);
+router.patch('/updateMe', userController.updateMe);
 router.delete('/deleteMe', userController.deleteMe);
 
 // 이밑으로 라우터는 유저만 가능!

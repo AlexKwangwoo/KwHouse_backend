@@ -1,4 +1,3 @@
-const joinQuery = require('mongo-join-query');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 const AWS = require('aws-sdk');
@@ -7,7 +6,6 @@ const factory = require('./handlerFactory');
 const AppError = require('../utils/appError');
 const Category = require('../models/categoryModel');
 const Room = require('../models/roomModel');
-const uploadToS3 = require('../utils/s3');
 
 exports.getAllRooms = factory.getAll(Room);
 //reviews 는 roomModel안에서 roomSchema.virtual('reviews' <-의것임
@@ -24,12 +22,12 @@ exports.getRoom = factory.getOne(Room, {
     {
       path: 'user',
       model: 'User',
-      select: 'name'
+      select: 'name profile_img'
     }
   ],
   options: {
-    limit: 2,
-    sort: { createdAt: -1 } //-1도됨
+    limit: 6,
+    sort: { createdAt: -1 } //-1도됨 createdAt는 내가 입력한 model에서 가져오는것임
     // skip: 0
   }
 });
@@ -55,6 +53,8 @@ const multerStorage = multerS3({
 });
 
 const multerFilter = (req, file, cb) => {
+  // 파일 확장자 체크 ex) image/png
+
   if (file.mimetype.startsWith('image')) {
     cb(null, true);
   } else {
@@ -67,8 +67,8 @@ const upload = multer({
   fileFilter: multerFilter
 });
 
-exports.uploadTourImages = upload.array('images', 10);
-exports.insertTourImagesLinks = (req, res, next) => {
+exports.uploadRoomImages = upload.array('images', 10);
+exports.insertRoomImagesLinks = (req, res, next) => {
   if (!req.files) return next();
   const images = [];
   req.files.forEach(file => {
