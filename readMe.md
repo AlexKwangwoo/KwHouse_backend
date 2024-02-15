@@ -25,8 +25,12 @@ Things to do
 - (Done) Add On Service -> both referencing
 - (Done) category -> both
 - (Done) review 방안에 6개만 보이게 해놨음 하지만 자세히 클릭시 => 페이지네이션 => 방에따라
+- (Done) review 방한개당 유저 하나만 가능!
 - (Done) user picture option
-
-- settings option
+- (Done) settings option
+- wishlist
+- user notification
+- booking
+- booking history
 
 Remember things
