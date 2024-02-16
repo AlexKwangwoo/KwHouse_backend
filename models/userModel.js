@@ -101,6 +101,14 @@ const userSchema = new mongoose.Schema({
       message: 'Passwords are not the same!'
     }
   },
+
+  wishlist: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Room'
+    }
+  ],
+
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
@@ -146,7 +154,10 @@ userSchema.pre(/^find/, function(next) {
   // 미리 생성된 유저들중 active 필드가 없는곳이 있을것이므로
   // equal === true /{active:true} 하는게 아니라 active !== false 를 찾을것임!
   // this points to the current query
-  this.find({ active: { $ne: false } });
+  this.find({ active: { $ne: false } }).populate({
+    path: 'wishlist',
+    select: 'name id -amenities -category -owner' //-를붙이고 owner 안해주면 계속 방이유저찾고 유저가 방찾고 무한루프돌게됨!
+  });
   next();
 });
 

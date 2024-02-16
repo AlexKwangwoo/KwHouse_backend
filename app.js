@@ -10,6 +10,13 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 // const bodyParser = require('body-parser');
 const compression = require('compression');
+// Swagger
+// eslint-disable-next-line import/no-extraneous-dependencies
+const swaggerjsdoc = require('swagger-jsdoc');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const swaggerui = require('swagger-ui-express');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const { SwaggerTheme } = require('swagger-themes');
 const globalErrorHandler = require('./controllers/errorController');
 const AppError = require('./utils/appError');
 const userRouter = require('./routes/userRoutes');
@@ -20,6 +27,7 @@ const roomRouter = require('./routes/roomRoutes');
 const reviewRoomRouter = require('./routes/reviewRoomRoutes');
 const feedbackRouter = require('./routes/feedbackRoutes');
 const settingOptionRouter = require('./routes/settingOptionRoutes');
+const swaggerDocument = require('./swagger.json');
 
 // middle response 라던지 많은것들을 압축해서 보내준다.. 자세한건 다시 알아봐야할듯
 
@@ -65,39 +73,41 @@ app.use(express.static(path.join(__dirname, 'public'))); //path 사용해야함 
 // );
 
 // 이거 설정 잘해줘야 stripe 와 mapbox 가 실행가능함.. 안그러면 frontend에서 접근을 못함!
-app.use(
-  helmet.contentSecurityPolicy({
-    useDefaults: true,
-    directives: {
-      defaultSrc: ["'self'", 'data:', 'blob:'],
-      baseUri: ["'self'"],
-      fontSrc: ["'self'", 'https:', 'data:'],
-      scriptSrc: [
-        "'self'",
-        'https://*.cloudflare.com',
-        'https://*.stripe.com',
-        'http:',
-        'https://*.mapbox.com',
-        'data:'
-      ],
-      frameSrc: ["'self'", 'https://*.stripe.com'],
-      objectSrc: ["'none'"],
-      styleSrc: ["'self'", 'https:', 'unsafe-inline'],
-      workerSrc: ["'self'", 'data:', 'blob:'],
-      childSrc: ["'self'", 'blob:'],
-      imgSrc: ["'self'", 'data:', 'blob:'],
-      connectSrc: [
-        "'self'",
-        'blob:',
-        'https://*.mapbox.com',
-        'http://127.0.0.1:8000',
-        'ws://localhost:3000/'
-      ],
+// app.use(
+//   helmet.contentSecurityPolicy({
+//     useDefaults: true,
+//     directives: {
+//       defaultSrc: ["'self'", 'data:', 'blob:'],
+//       baseUri: ["'self'"],
+//       fontSrc: ["'self'", 'https:', 'data:'],
+//       scriptSrc: [
+//         "'self'",
+//         'https://*.cloudflare.com',
+//         'https://*.stripe.com',
+//         'http:',
+//         'https://*.mapbox.com',
+//         'data:'
+//       ],
+//       frameSrc: ["'self'", 'https://*.stripe.com'],
+//       objectSrc: ["'none'"],
+//       // styleSrc: ["'self'", 'https:', 'unsafe-inline'],
+//       workerSrc: ["'self'", 'data:', 'blob:'],
+//       childSrc: ["'self'", 'blob:'],
+//       imgSrc: ["'self'", 'data:', 'blob:'],
+//       connectSrc: [
+//         "'self'",
+//         'blob:',
+//         'https://*.mapbox.com',
+//         'http://127.0.0.1:8000',
+//         'ws://localhost:3000/'
+//       ],
 
-      upgradeInsecureRequests: []
-    }
-  })
-);
+//       upgradeInsecureRequests: []
+//     }
+//   })
+// );
+
+app.use(helmet());
 
 // 1) MIDDLEWARES
 if (process.env.NODE_ENV === 'development') {
@@ -191,10 +201,52 @@ app.use('/api/v1/reviews/room', reviewRoomRouter);
 app.use('/api/v1/feedbacks', feedbackRouter);
 app.use('/api/v1/settingOptions', settingOptionRouter);
 
+const theme = new SwaggerTheme();
+
+const optionsCss = {
+  explorer: true,
+  customCss: theme.getBuffer('dark')
+};
+
+const options = {
+  swaggerDefinition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'KW House api doc',
+      version: '0.1.0',
+      description: 'This is a simple KW house api',
+      contact: {
+        name: 'Kwangwoo Alex',
+        url: 'kwangwoo.com',
+        email: 'kwangwoo@gmail.com'
+      }
+    },
+
+    servers: [
+      {
+        url: 'http://localhost:3000/'
+      }
+    ]
+  },
+  apis: ['./routes/*.js']
+};
+
+const spacs = swaggerjsdoc(options);
+app.use(
+  '/api-docs', //
+  swaggerui.serve, //
+  swaggerui.setup(
+    swaggerDocument
+    // optionsCss
+  )
+);
+
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
 app.use(globalErrorHandler);
+
+// Swagger
 
 module.exports = app;

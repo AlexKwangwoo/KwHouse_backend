@@ -181,16 +181,36 @@ exports.getAllUsers = factory.getAll(User);
 exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);
 
-exports.createUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not defined! Please use /signup instead'
+exports.updateMyWishlist = catchAsync(async (req, res, next) => {
+  const doc = User.findByIdAndUpdate(
+    req.user.id,
+    {
+      wishlist: req.body.wishlist
+    },
+    { returnOriginal: false }
+  );
+
+  const updatedDoc = await doc.populate({
+    path: 'wishlist',
+    select: 'name id -amenities -category -owner' //-를붙이고 owner 안해주면 계속 방이유저찾고 유저가 방찾고 무한루프돌게됨!
   });
-};
 
-exports.getUser = factory.getOne(User);
-exports.getAllUsers = factory.getAll(User);
+  res.status(200).json({
+    status: 'success',
+    data: updatedDoc
+  });
+});
 
-// Do NOT update passwords with this!
-exports.updateUser = factory.updateOne(User);
-exports.deleteUser = factory.deleteOne(User);
+// exports.createUser = (req, res) => {
+//   res.status(500).json({
+//     status: 'error',
+//     message: 'This route is not defined! Please use /signup instead'
+//   });
+// };
+
+// exports.getUser = factory.getOne(User);
+// exports.getAllUsers = factory.getAll(User);
+
+// // Do NOT update passwords with this!
+// exports.updateUser = factory.updateOne(User);
+// exports.deleteUser = factory.deleteOne(User);
