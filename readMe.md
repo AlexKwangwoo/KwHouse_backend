@@ -28,8 +28,9 @@ Things to do
 - (Done) review 방한개당 유저 하나만 가능!
 - (Done) user picture option
 - (Done) settings option
-- wishlist
+- (Done) wishlist
 - user notification
+- promotion
 - booking
 - booking history
 

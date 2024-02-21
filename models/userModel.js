@@ -109,6 +109,13 @@ const userSchema = new mongoose.Schema({
     }
   ],
 
+  promotion: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Promotion'
+    }
+  ],
+
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,

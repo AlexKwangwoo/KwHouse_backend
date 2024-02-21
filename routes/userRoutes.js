@@ -23,6 +23,7 @@ router.patch(
 );
 
 router.patch('/me/wishlist', userController.updateMyWishlist);
+router.patch('/me/promotion', userController.updateMyPromotion);
 
 // multer는 multi form 방식을 지원한다!
 router.patch('/updateMe', userController.updateMe);

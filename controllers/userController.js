@@ -192,7 +192,31 @@ exports.updateMyWishlist = catchAsync(async (req, res, next) => {
 
   const updatedDoc = await doc.populate({
     path: 'wishlist',
-    select: 'name id -amenities -category -owner' //-를붙이고 owner 안해주면 계속 방이유저찾고 유저가 방찾고 무한루프돌게됨!
+    //-를붙이고 owner 안해주면 계속 방이유저찾고 유저가 방찾고 무한루프돌게됨!
+    // room에서 owner도 find pre를 통해 오너를 계속찾아주기에!
+    select: 'name id -amenities -category -owner'
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: updatedDoc
+  });
+});
+
+exports.updateMyPromotion = catchAsync(async (req, res, next) => {
+  const doc = User.findByIdAndUpdate(
+    req.user.id,
+    {
+      promotion: req.body.promotion
+    },
+    { returnOriginal: false }
+  );
+
+  const updatedDoc = await doc.populate({
+    path: 'promotion',
+    //-를붙이고 owner 안해주면 계속 방이유저찾고 유저가 방찾고 무한루프돌게됨!
+    // room에서 owner도 find pre를 통해 오너를 계속찾아주기에!
+    select: 'name'
   });
 
   res.status(200).json({
