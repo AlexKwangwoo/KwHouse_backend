@@ -16,7 +16,9 @@
 
 https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design
 
-7.
+7. pre 쓸때
+   const Booking = mongoose.model('Booking', bookingSchema);
+   module.exports = Booking; 위에 써야함!! 안그러면 작동안함
 
 Things to do
 
@@ -31,7 +33,7 @@ Things to do
 - (Done) wishlist
 - user notification
 - promotion
-- booking
+- booking -> 예약안되게 막아야하는 로직 세워야함! -> Room booking check!! ->
 - booking history
 
 Remember things

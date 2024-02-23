@@ -29,7 +29,8 @@ const feedbackRouter = require('./routes/feedbackRoutes');
 const settingOptionRouter = require('./routes/settingOptionRoutes');
 const notificationRouter = require('./routes/notificationRoutes');
 const promotionRouter = require('./routes/promotionRoutes');
-
+const bookingRouter = require('./routes/bookingRoutes');
+const bookingHistoryRouter = require('./routes/bookingHistoryRoutes');
 const swaggerDocument = require('./swagger.json');
 
 // middle response 라던지 많은것들을 압축해서 보내준다.. 자세한건 다시 알아봐야할듯
@@ -204,6 +205,8 @@ app.use('/api/v1/reviews/room', reviewRoomRouter);
 app.use('/api/v1/feedbacks', feedbackRouter);
 app.use('/api/v1/notifications', notificationRouter);
 app.use('/api/v1/promotions', promotionRouter);
+app.use('/api/v1/bookings', bookingRouter);
+app.use('/api/v1/bookingHistories', bookingHistoryRouter);
 
 app.use('/api/v1/settingOptions', settingOptionRouter);
 

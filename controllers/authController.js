@@ -136,6 +136,7 @@ exports.logout = (req, res) => {
   res.status(200).json({ status: 'success' });
 };
 
+// protect 이걸써줘야 유저를 넣어줄것임!!
 exports.protect = catchAsync(async (req, res, next) => {
   // 1) Getting token and check of it's there
   let token;
