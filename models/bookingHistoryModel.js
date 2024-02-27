@@ -41,7 +41,7 @@ const bookingHistorySchema = new mongoose.Schema({
 
 bookingHistorySchema.pre(/^find/, function(next) {
   // user 만 쓰면 전체다 나오는거 / path 주면 select 까지 선택가능! boooking 참고!
-  this.populate({ path: 'booking', select: 'name' });
+  this.populate({ path: 'booking', select: 'name status' });
 
   next();
 });

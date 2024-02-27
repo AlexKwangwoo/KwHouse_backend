@@ -102,7 +102,7 @@ roomSchema.pre(/^find/, function(next) {
       // 이렇게하면 투어에서 리뷰를 볼떄 또 투어를 넣어줄것임... 그래서 밑에서 투어없이 해봄
       //durationWeeks 도 보이는데 이는 가상 결과라 나옴 db에서오는게아님
       path: 'owner',
-      select: 'name' //-를붙이고 guides 필드에 __v passwordChangedAt을 안보이게 한다
+      select: '-wishlist name profile_img' //-를붙이고 guides 필드에 __v passwordChangedAt을 안보이게 한다
     }); //영상에서는 populate tour는 안썼음.. 그래서 바로 tour에 id가 들어가서 밑에 post에서 tour <-자리에 id가 있는것임
 
   // this.populate({

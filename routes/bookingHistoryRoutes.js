@@ -14,6 +14,6 @@ router
   .delete(bookingHistoryController.deleteBookingHistory);
 
 router.use(authController.protect);
-router.route('/:id/approve').patch(bookingHistoryController.approveBooking);
+router.route('/approve/:id').post(bookingHistoryController.approveBooking);
 
 module.exports = router;
