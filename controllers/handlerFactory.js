@@ -50,9 +50,15 @@ exports.createOne = Model =>
 
 exports.getOne = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
-    let query = Model.findById(req.params.id);
-    console.log('come to get one!!');
+    let query;
+    if (req.query.fields) {
+      query = Model.findById(req.params.id, req.query.fields);
+    } else {
+      query = Model.findById(req.params.id);
+    }
 
+    console.log('come to get one!!');
+    console.log('???', req.query);
     // console.log('queryquery', query);
     if (popOptions) query = query.populate(popOptions);
 

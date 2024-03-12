@@ -181,25 +181,57 @@ exports.getAllUsers = factory.getAll(User);
 exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);
 
+exports.myWishlist = catchAsync(async (req, res, next) => {
+  // const query = User.findById(req.user.id, { fields: 'name' });
+  const query = User.findById(req.user.id, 'wishlist');
+  const doc = await query;
+  if (!doc) {
+    return next(new AppError('No document found with that ID', 404));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      data: doc
+    }
+  });
+});
+
 exports.updateMyWishlist = catchAsync(async (req, res, next) => {
+  const data = await User.findById(req.user.id, 'wishlist');
+  const myWishList = data.wishlist;
+
+  const newList = [];
+  let checkItHas = 0;
+  myWishList.forEach(each => {
+    if (each.id !== req.body.wishlistId) {
+      newList.push(each.id);
+    } else if (each.id === req.body.wishlistId) {
+      checkItHas += 1;
+    }
+  });
+
+  if (checkItHas === 0) {
+    newList.push(req.body.wishlistId);
+  }
+
   const doc = User.findByIdAndUpdate(
     req.user.id,
     {
-      wishlist: req.body.wishlist
+      wishlist: newList
     },
     { returnOriginal: false }
   );
 
-  const updatedDoc = await doc.populate({
-    path: 'wishlist',
-    //-를붙이고 owner 안해주면 계속 방이유저찾고 유저가 방찾고 무한루프돌게됨!
-    // room에서 owner도 find pre를 통해 오너를 계속찾아주기에!
-    select: 'name id -amenities -category -owner'
-  });
+  // const updatedDoc = await doc.populate({
+  //   path: 'wishlist',
+  //   //-를붙이고 owner 안해주면 계속 방이유저찾고 유저가 방찾고 무한루프돌게됨!
+  //   // room에서 owner도 find pre를 통해 오너를 계속찾아주기에!
+  //   select: 'name id -amenities -category -owner'
+  // });
 
   res.status(200).json({
-    status: 'success',
-    data: updatedDoc
+    status: 'success'
   });
 });
 

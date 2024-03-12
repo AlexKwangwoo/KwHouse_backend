@@ -22,7 +22,12 @@ router.patch(
   userController.updatePictureToUser
 );
 
-router.patch('/me/wishlist', userController.updateMyWishlist);
+router
+  .route('/me/wishlist')
+  .get(userController.myWishlist)
+  .patch(userController.updateMyWishlist);
+
+// router.patch('/me/wishlist', userController.updateMyWishlist);
 router.patch('/me/promotion', userController.updateMyPromotion);
 
 // multer는 multi form 방식을 지원한다!

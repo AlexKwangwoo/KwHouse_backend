@@ -54,7 +54,7 @@ const multerStorage = multerS3({
 
 const multerFilter = (req, file, cb) => {
   // 파일 확장자 체크 ex) image/png
-
+  console.log('file', file);
   if (file.mimetype.startsWith('image')) {
     cb(null, true);
   } else {
@@ -67,6 +67,7 @@ const upload = multer({
   fileFilter: multerFilter
 });
 
+// field 의 키는 images 로 해서 프론트엔드에서 보내줘야함!!
 exports.uploadRoomImages = upload.array('images', 10);
 exports.insertRoomImagesLinks = (req, res, next) => {
   if (!req.files) return next();
