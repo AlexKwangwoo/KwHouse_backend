@@ -6,7 +6,7 @@ const roomSchema = new mongoose.Schema(
       type: String,
       unique: true,
       required: [true, 'Provide name!'],
-      maxlength: [30, 'Name must have less or equal then 20 characters']
+      maxlength: [40, 'Name must have less or equal then 40 characters']
     },
 
     country: {
