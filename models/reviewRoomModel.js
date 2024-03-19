@@ -59,7 +59,7 @@ reviewRoomSchema.pre(/^find/, function(next) {
     // 이렇게하면 투어에서 리뷰를 볼떄 또 투어를 넣어줄것임... 그래서 밑에서 투어없이 해봄
     //durationWeeks 도 보이는데 이는 가상 결과라 나옴 db에서오는게아님
     path: 'user',
-    select: 'name -wishlist profile_img' //-를붙이고 guides 필드에 __v passwordChangedAt을 안보이게 한다
+    select: 'name -wishlist profile_img address ' //-를붙이고 guides 필드에 __v passwordChangedAt을 안보이게 한다
   }); //영상에서는 populate tour는 안썼음.. 그래서 바로 tour에 id가 들어가서 밑에 post에서 tour <-자리에 id가 있는것임
 
   // this.populate({
@@ -93,7 +93,13 @@ reviewRoomSchema.statics.calcAverageRatings = async function(roomId) {
       $group: {
         _id: '$room', //하나의 투어에 여러개의 리뷰가 있을껀데.. 투어별로 볼것임! 근데 메치에서 투어 하나만 선택했음
         nRating: { $sum: 1 }, // 1 x 토탈length 임.. 이렇게하면 x 1(곱하기) 이라생각해
-        avgRating: { $avg: '$overall_rating' } //rating의 평균을 구할것임
+        avgRating: { $avg: '$overall_rating' }, //rating의 평균을 구할것임
+        avg_value_rating: { $avg: '$value_rating' },
+        avg_cleanliness_rating: { $avg: '$cleanliness_rating' },
+        avg_communication_rating: { $avg: '$communication_rating' },
+        avg_location_rating: { $avg: '$location_rating' },
+        avg_accuracy_rating: { $avg: '$accuracy_rating' },
+        avg_check_in_rating: { $avg: '$check_in_rating' }
       }
     }
   ]);
@@ -103,12 +109,25 @@ reviewRoomSchema.statics.calcAverageRatings = async function(roomId) {
     // 발견된게 없다면 tour model에서 default로 설정한 0, 4.5를 저장할것임!
     await Room.findByIdAndUpdate(roomId, {
       all_overall_rating_quantity: stats[0].nRating,
-      all_overall_rating_average: stats[0].avgRating
+      all_overall_rating_average: stats[0].avgRating,
+      all_overall_value_rating_average: stats[0].avg_value_rating,
+      all_overall_cleanliness_rating_average: stats[0].avg_cleanliness_rating,
+      all_overall_communication_rating_average:
+        stats[0].avg_communication_rating,
+      all_overall_location_rating_average: stats[0].avg_location_rating,
+      all_overall_accuracy_rating_average: stats[0].avg_accuracy_rating,
+      all_overall_check_in_rating_average: stats[0].avg_check_in_rating
     });
   } else {
     await Room.findByIdAndUpdate(roomId, {
       all_overall_rating_quantity: 0,
-      all_overall_rating_average: 0
+      all_overall_rating_average: 0,
+      all_overall_value_rating_average: 0,
+      all_overall_cleanliness_rating_average: 0,
+      all_overall_communication_rating_average: 0,
+      all_overall_location_rating_average: 0,
+      all_overall_accuracy_rating_average: 0,
+      all_overall_check_in_rating_average: 0
     });
   }
 };

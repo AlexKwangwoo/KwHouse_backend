@@ -39,10 +39,17 @@ const roomSchema = new mongoose.Schema(
 
     all_overall_rating_average: { type: Number, min: 0, max: 5 },
 
+    all_overall_value_rating_average: { type: Number, min: 0, max: 5 },
+    all_overall_cleanliness_rating_average: { type: Number, min: 0, max: 5 },
+    all_overall_communication_rating_average: { type: Number, min: 0, max: 5 },
+    all_overall_location_rating_average: { type: Number, min: 0, max: 5 },
+    all_overall_accuracy_rating_average: { type: Number, min: 0, max: 5 },
+    all_overall_check_in_rating_average: { type: Number, min: 0, max: 5 },
+
     description: {
       type: String,
       maxlength: [
-        200,
+        3000,
         'Description must have less or equal then 100 characters'
       ]
     },
