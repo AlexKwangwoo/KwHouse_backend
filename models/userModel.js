@@ -47,6 +47,8 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Phone number is required']
   },
 
+  total_review: { type: Number, min: 0 },
+
   is_host: {
     type: Boolean,
     default: false

@@ -7,6 +7,7 @@ const AppError = require('../utils/appError');
 const Category = require('../models/categoryModel');
 const Room = require('../models/roomModel');
 
+//fields: name house_type price country pictures 로 api부르고있음!
 exports.getAllRooms = factory.getAll(Room);
 //reviews 는 roomModel안에서 roomSchema.virtual('reviews' <-의것임
 exports.getRoom = factory.getOne(Room, {

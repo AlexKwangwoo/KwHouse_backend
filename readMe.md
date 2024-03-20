@@ -20,7 +20,9 @@ https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design
    const Booking = mongoose.model('Booking', bookingSchema);
    module.exports = Booking; 위에 써야함!! 안그러면 작동안함
 
-Things to do
+Things t
+
+8. unwind 입력 문서에서 배열 필드를 분해하여 각 요소에 대한 문서를 출력합니다. 각 출력 문서는 배열 필드의 값이 요소로 대체된 입력 문서입니다.
 
 - (Done) User -> rooom에서 parents referencing /만약 A유저가 가지고있는 room을 보고싶다면 room에서 필터를 해서가져오면됨!
 - (Done) Amenity -> room에서 children referencing

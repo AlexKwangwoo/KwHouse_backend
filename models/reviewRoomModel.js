@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Room = require('./roomModel');
+const User = require('./userModel');
 
 const reviewRoomSchema = new mongoose.Schema(
   {
@@ -83,8 +84,104 @@ reviewRoomSchema.pre(/^find/, function(next) {
 
 // 우리가 statics안에 함수를 만들어주는것임!
 reviewRoomSchema.statics.calcAverageRatings = async function(roomId) {
-  console.log('roomIdroomIdroomId', roomId);
-  console.log('this in calcAverageRatings', this);
+  // console.log('roomIdroomIdroomId', roomId);
+  // console.log('this in calcAverageRatings', this);
+
+  const { owner } = await Room.findOne({ _id: roomId });
+  const result = await Room.find({ owner: owner._id }).populate({
+    path: 'reviews',
+    select: 'review'
+  });
+
+  let numberOfReview = 0;
+  if (result) {
+    result.forEach(each => {
+      if (each.reviews) {
+        numberOfReview += each.reviews.length;
+      }
+    });
+  }
+
+  if (result.length > 0) {
+    // 발견된게 없다면 tour model에서 default로 설정한 0, 4.5를 저장할것임!
+    await User.findByIdAndUpdate(owner._id, {
+      total_review: numberOfReview
+    });
+  } else {
+    await User.findByIdAndUpdate(owner._id, {
+      total_review: 0
+    });
+  }
+
+  // // const testing = await this.find({ 'room.owner': owner._id });
+  // const testing = await this.find({ room: owner._id });
+  // console.log('review_num', review_num);
+
+  // console.log('testingtestingtestingtesting', testing);
+
+  // const statsUser = await Room.aggregate([
+  //   {
+  //     $match: { owner: owner._id }
+  //   },
+  //   { $unwind: '$review' },
+  //   {
+  //     $group: {
+  //       _id: '$review', //하나의 투어에 여러개의 리뷰가 있을껀데.. 투어별로 볼것임! 근데 메치에서 투어 하나만 선택했음
+  //       total: { $sum: '$review' } // 1 x 토탈length 임.. 이렇게하면 x 1(곱하기) 이라생각해
+  //     }
+  //   }
+  // ]);
+  // // console.log('statsUserstatsUser', statsUser);
+
+  // const statsuser2 = await this.aggregate([
+  //   {
+  //     $unwind: {
+  //       path: '$room'
+  //     }
+  //   }
+  //   // {
+  //   //   $match: {
+  //   //     room: {
+  //   //       owner: owner._id
+  //   //     }
+  //   //   }
+  //   // }
+  //   // {
+  //   //   $group: {
+  //   //     _id: '$room', //하나의 투어에 여러개의 리뷰가 있을껀데.. 투어별로 볼것임! 근데 메치에서 투어 하나만 선택했음
+  //   //     nRating: { $sum: 1 } // 1 x 토탈length 임.. 이렇게하면 x 1(곱하기) 이라생각해
+  //   //   }
+  //   // }
+  // ]);
+
+  // console.log('statsuser2', statsuser2);
+  // stats [ { _id: 65c42190e9828abb3e812e8e, nRating: 8, avgRating: 4.125 } ]
+  // if (stats.length > 0) {
+  //   // 발견된게 없다면 tour model에서 default로 설정한 0, 4.5를 저장할것임!
+  //   await Room.findByIdAndUpdate(roomId, {
+  //     all_overall_rating_quantity: stats[0].nRating,
+  //     all_overall_rating_average: stats[0].avgRating,
+  //     all_overall_value_rating_average: stats[0].avg_value_rating,
+  //     all_overall_cleanliness_rating_average: stats[0].avg_cleanliness_rating,
+  //     all_overall_communication_rating_average:
+  //       stats[0].avg_communication_rating,
+  //     all_overall_location_rating_average: stats[0].avg_location_rating,
+  //     all_overall_accuracy_rating_average: stats[0].avg_accuracy_rating,
+  //     all_overall_check_in_rating_average: stats[0].avg_check_in_rating
+  //   });
+  // } else {
+  //   await Room.findByIdAndUpdate(roomId, {
+  //     all_overall_rating_quantity: 0,
+  //     all_overall_rating_average: 0,
+  //     all_overall_value_rating_average: 0,
+  //     all_overall_cleanliness_rating_average: 0,
+  //     all_overall_communication_rating_average: 0,
+  //     all_overall_location_rating_average: 0,
+  //     all_overall_accuracy_rating_average: 0,
+  //     all_overall_check_in_rating_average: 0
+  //   });
+  // }
+
   const stats = await this.aggregate([
     {
       $match: { room: roomId }
@@ -177,6 +274,8 @@ reviewRoomSchema.post(/^findOneAnd/, async function() {
   // console.log('testR', testR);
   // console.log('this from Post !!!!', this);
   // console.log('this.tour from Post !!!!', this.tour);
+
+  console.log('this from Post !!!!', this.r);
   console.log('this.r.tour from post 2 !!!', this.r.room);
   // await testR.constructor.calcAverageRatings(testR.tour._id); // id는안됨.._id만됨
   await this.r.constructor.calcAverageRatings(this.r.room);
