@@ -102,7 +102,7 @@ const roomSchema = new mongoose.Schema(
 // 이건 자식이 포린키를 가지고있고 부모가 아무정보도 없을때.. 리뷰를 생각해보면 1000만개가 부모가 저장하기힘듬
 // 그래서 리뷰 자체에 부모키를 넣고 이렇게 불러올수있는것임!
 roomSchema.virtual('reviews', {
-  ref: 'ReviewRoom', //본채의 아이디를
+  ref: 'ReviewRoom', //본채의 아이디를 const reviewRoom = mongoose.model('ReviewRoom', reviewRoomSchema);
   foreignField: 'room', // 넣어줄곳
   localField: '_id'
 });

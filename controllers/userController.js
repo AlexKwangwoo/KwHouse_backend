@@ -215,7 +215,10 @@ exports.updateMyWishlist = catchAsync(async (req, res, next) => {
     newList.push(req.body.wishlistId);
   }
 
-  const doc = User.findByIdAndUpdate(
+  console.log('myWishList', myWishList);
+  console.log('newList', newList);
+
+  const doc = await User.findByIdAndUpdate(
     req.user.id,
     {
       wishlist: newList
@@ -232,6 +235,9 @@ exports.updateMyWishlist = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success'
+    // data: {
+    //   updatedDoc
+    // }
   });
 });
 

@@ -229,6 +229,49 @@ reviewRoomSchema.statics.calcAverageRatings = async function(roomId) {
   }
 };
 
+reviewRoomSchema.statics.calcAverageRatingsTwo = async function(roomId) {
+  // const testing = await this.find({ 'room.owner': owner._id });
+  // const testing = await this.find({ room: owner._id });
+
+  const { owner } = await Room.findOne({ _id: roomId });
+
+  const statsUser = await Room.aggregate([
+    {
+      $match: { owner: owner._id }
+    },
+    { $project: { amenities: 1, maximum_guests: 1 } }
+    // { $unwind: '$amenities' }
+    // {
+    //   $group: {
+    //     _id: '$review', //하나의 투어에 여러개의 리뷰가 있을껀데.. 투어별로 볼것임! 근데 메치에서 투어 하나만 선택했음
+    //     total: { $sum: '$review' } // 1 x 토탈length 임.. 이렇게하면 x 1(곱하기) 이라생각해
+    //   }
+    // }
+  ]);
+  console.log('statsUserstatsUser', statsUser);
+
+  // const statsuser2 = await this.aggregate([
+  //   {
+  //     $match: { room: roomId }
+  //   },
+  //   {
+  //     $group: {
+  //       _id: '$room', //하나의 투어에 여러개의 리뷰가 있을껀데.. 투어별로 볼것임! 근데 메치에서 투어 하나만 선택했음
+  //       nRating: { $sum: 1 }, // 1 x 토탈length 임.. 이렇게하면 x 1(곱하기) 이라생각해
+  //       avgRating: { $avg: '$overall_rating' }, //rating의 평균을 구할것임
+  //       avg_value_rating: { $avg: '$value_rating' },
+  //       avg_cleanliness_rating: { $avg: '$cleanliness_rating' },
+  //       avg_communication_rating: { $avg: '$communication_rating' },
+  //       avg_location_rating: { $avg: '$location_rating' },
+  //       avg_accuracy_rating: { $avg: '$accuracy_rating' },
+  //       avg_check_in_rating: { $avg: '$check_in_rating' }
+  //     }
+  //   }
+  // ]);
+
+  // console.log('statsuser2', statsuser2);
+};
+
 reviewRoomSchema.pre(/^findOneAnd/, async function(next) {
   // pre에서의 this는 쿼리에 접근 가능 하지만 post에서는 쿼리 접근 가능 안함! test를 보자 post에서 받을수있는지
 
@@ -257,8 +300,8 @@ reviewRoomSchema.pre(/^findOneAnd/, async function(next) {
   //   id: '659c7a461b974608c56fe177'
   // },
   this.test = 'testing I am here';
-  console.log('pre this', this);
-  console.log('pre this r', this.r);
+  // console.log('pre this', this);
+  // console.log('pre this r', this.r);
 
   next();
 });
@@ -275,8 +318,8 @@ reviewRoomSchema.post(/^findOneAnd/, async function() {
   // console.log('this from Post !!!!', this);
   // console.log('this.tour from Post !!!!', this.tour);
 
-  console.log('this from Post !!!!', this.r);
-  console.log('this.r.tour from post 2 !!!', this.r.room);
+  // console.log('this from Post !!!!', this.r);
+  // console.log('this.r.tour from post 2 !!!', this.r.room);
   // await testR.constructor.calcAverageRatings(testR.tour._id); // id는안됨.._id만됨
   await this.r.constructor.calcAverageRatings(this.r.room);
 });
