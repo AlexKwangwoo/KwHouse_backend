@@ -194,7 +194,7 @@ app.use((req, res, next) => {
 //   res.status(200).render('tour', { title: 'The Forest Hiker', user: 'Jonas' });
 // });
 
-app.use(compression());
+app.use(compression()); //text 를 압축해줄것이다
 
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/amenities', amenityRouter);
