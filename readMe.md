@@ -96,3 +96,25 @@ Things t
 * booking history
 
 Remember things
+
+install / deploy
+https://www.youtube.com/watch?v=T-Pum2TraX4&t=713s 인스탄스 만드는거 까지만보고
+https://www.youtube.com/watch?v=i5oU38ejlfI 여기로 와서 따라하기
+https://github.com/yeshwanthlm/nodejs-on-ec2
+
+1. curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+2. . ~/.nvm/nvm.sh
+
+Use nvm to install the latest version of Node.js by typing the following at the command line.
+
+3. nvm install node
+
+git install
+
+4. sudo apt-get update -y
+5. sudo apt-get install git -y
+6. git clone https://github.com/AlexKwangwoo/KwHouse_backend.git
+7. ls -ltr => 하면 우리가 클론한게 보일것임
+8. 그러면 cd KwHouse_backend 로 이동후
+9. npm install
+10. npm start

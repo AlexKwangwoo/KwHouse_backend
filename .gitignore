@@ -1,5 +1,5 @@
 /build
-
+.pem
 # Logs
 logs
 *.log
