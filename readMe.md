@@ -98,7 +98,7 @@ Things t
 Remember things
 
 install / deploy
-https://www.youtube.com/watch?v=T-Pum2TraX4&t=713s 인스탄스 만드는거 까지만보고
+https://www.youtube.com/watch?v=T-Pum2TraX4&t=713s 인스탄스 만드는거 까지만보고 우분투 선택!
 https://www.youtube.com/watch?v=i5oU38ejlfI 여기로 와서 따라하기
 https://github.com/yeshwanthlm/nodejs-on-ec2
 
@@ -118,3 +118,21 @@ git install
 8. 그러면 cd KwHouse_backend 로 이동후
 9. npm install
 10. npm start
+11. env setting
+    Edit ~/.bashrc file of User which will run the program
+
+sudo nano ~/.bashrc
+
+Add following line at the end, use any variable_name. Assuming unique and unused
+
+마지막 줄에 export API_KEY=btgj32fkf 이런식으로 하고 엔터치면 저장됨
+
+Save File and
+
+source ~/.bashrc
+
+    https://stackoverflow.com/questions/47321085/how-to-set-up-node-js-process-env-variables-for-production-with-an-amazon-ec2-in
+
+12. 마지막으로 인스턴스 클릭후 security group에서 inbound rules 들어가서 edit 누른뒤
+13. add rule 해서 type custom tcp -> port range 4000 -> source my ip 하고 업데이트 해주면됨
+14. 주소칠때 http: 로 해야함 s 있으면 안됨
